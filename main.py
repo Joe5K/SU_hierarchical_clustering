@@ -10,8 +10,8 @@ class HierarchicalClustering:
     def __init__(self, filename: str, metrics_function: str, distance_function: str):
         self.data = []
         self.history = {}
-        self.metrics_function = getattr(self, f"_{metrics_function}")
-        self.distance_function = getattr(self, f"_{distance_function}")
+        self.metrics_function = getattr(self, f"_{metrics_function}_linkage")
+        self.distance_function = getattr(self, f"_{distance_function}_distance")
         self._load_initial_clusters(filename)
         self._cluster()
         self.plot()
@@ -106,12 +106,13 @@ class HierarchicalClustering:
             for cluster in self.history[int(number)]:
                 cluster = [*zip(*cluster)]
                 plt.scatter(cluster[0], cluster[1])
+            plt.title(f"{filename_.split('.')[0]}_{number}_{distance_function_}_{metrics_function_}")
             plt.show()
 
 
 if __name__ == "__main__":
     filename_ = "clusters3.csv"
-    metrics_function_ = "single_linkage"
-    distance_function_ = "manhattan_distance"
+    metrics_function_ = "single"
+    distance_function_ = "euclidean"
 
     clustering = HierarchicalClustering(filename_, metrics_function_, distance_function_)
