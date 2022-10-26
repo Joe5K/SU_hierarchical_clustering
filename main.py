@@ -1,4 +1,3 @@
-from math import sqrt
 import matplotlib.pyplot as plt
 from copy import deepcopy
 from functools import lru_cache
@@ -30,7 +29,7 @@ class HierarchicalClustering:
         distance = 0
         for i, j in zip(first_vector, second_vector):
             distance += (i - j) ** 2
-        return sqrt(distance)
+        return distance  # no need for sqrt, we just want the highest/lowest value
 
     @staticmethod
     @lru_cache(maxsize=MAX_CACHE_SIZE)
@@ -42,7 +41,7 @@ class HierarchicalClustering:
 
     @lru_cache(maxsize=MAX_CACHE_SIZE)
     def _single_linkage(self, first_cluster, second_cluster):
-        min_distance = float("inf")
+        min_distance = float("sqrt")
 
         for i_data in first_cluster:
             for j_data in second_cluster:
@@ -103,16 +102,19 @@ class HierarchicalClustering:
     def plot(self):
         while True:
             number = input("Which number of clusters do you want to plot?\n")
-            for cluster in self.history[int(number)]:
-                cluster = [*zip(*cluster)]
-                plt.scatter(cluster[0], cluster[1])
-            plt.title(f"{filename_.split('.')[0]}_{number}_{distance_function_}_{metrics_function_}")
-            plt.show()
+            if number.isnumeric() and (data := self.history.get(int(number))):
+                for cluster in data:
+                    cluster = [*zip(*cluster)]
+                    plt.scatter(cluster[0], cluster[1])
+                plt.title(f"{filename_.split('.')[0]}_{number}_{distance_function_}_{metrics_function_}")
+                plt.show()
+            else:
+                print("Wrong input")
 
 
 if __name__ == "__main__":
     filename_ = "clusters3.csv"
-    metrics_function_ = "single"
+    metrics_function_ = "complete"
     distance_function_ = "euclidean"
 
     clustering = HierarchicalClustering(filename_, metrics_function_, distance_function_)
