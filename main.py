@@ -25,7 +25,7 @@ class HierarchicalClustering:
 
     @staticmethod
     @lru_cache(maxsize=MAX_CACHE_SIZE)
-    def _euclidean_distance(first_vector, second_vector):
+    def _euclidean_distance(first_vector: tuple[int], second_vector: tuple[int]) -> float:
         distance = 0
         for i, j in zip(first_vector, second_vector):
             distance += (i - j) ** 2
@@ -33,15 +33,15 @@ class HierarchicalClustering:
 
     @staticmethod
     @lru_cache(maxsize=MAX_CACHE_SIZE)
-    def _manhattan_distance(first_vector, second_vector):
+    def _manhattan_distance(first_vector: tuple[int], second_vector: tuple[int]) -> float:
         distance = 0
         for i, j in zip(first_vector, second_vector):
             distance += abs(i - j)
         return distance
 
     @lru_cache(maxsize=MAX_CACHE_SIZE)
-    def _single_linkage(self, first_cluster, second_cluster):
-        min_distance = float("sqrt")
+    def _single_linkage(self, first_cluster: tuple[int], second_cluster: tuple[int]) -> float:
+        min_distance = float("inf")
 
         for i_data in first_cluster:
             for j_data in second_cluster:
@@ -52,7 +52,7 @@ class HierarchicalClustering:
         return min_distance
 
     @lru_cache(maxsize=MAX_CACHE_SIZE)
-    def _average_linkage(self, first_cluster, second_cluster):
+    def _average_linkage(self, first_cluster: tuple[int], second_cluster: tuple[int]) -> float:
         distance, counter = 0, 0
 
         for i_data in first_cluster:
@@ -63,7 +63,7 @@ class HierarchicalClustering:
         return distance / counter
 
     @lru_cache(maxsize=MAX_CACHE_SIZE)
-    def _complete_linkage(self, first_cluster, second_cluster):
+    def _complete_linkage(self, first_cluster: tuple[int], second_cluster: tuple[int]) -> float:
         max_distance = 0
 
         for i_data in first_cluster:
@@ -74,7 +74,7 @@ class HierarchicalClustering:
 
         return max_distance
 
-    def _find_clusters_to_merge(self):
+    def _find_clusters_to_merge(self) -> tuple[int, 2]:
         first, second = None, None
         min_distance = float("inf")
 
@@ -88,7 +88,7 @@ class HierarchicalClustering:
 
         return first, second
 
-    def _cluster(self):
+    def _cluster(self) -> None:
         while len(self.data) > 1:
             first, second = self._find_clusters_to_merge()
             self.data[first].extend(self.data.pop(second))
@@ -99,7 +99,7 @@ class HierarchicalClustering:
         self.distance_function.cache_clear()
         self.metrics_function.cache_clear()
 
-    def plot(self):
+    def plot(self) -> None:
         while True:
             number = input("Which number of clusters do you want to plot?\n")
             if number.isnumeric() and (data := self.history.get(int(number))):
